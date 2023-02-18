@@ -9,6 +9,7 @@ class DOMHelper {
     const element = document.getElementById(elementId);
     const destinationElement = document.querySelector(newDestinationSelector);
     destinationElement.append(element);
+    element.scrollIntoView({ behavior: "smooth" });
   }
 }
 
@@ -52,7 +53,10 @@ class Tooltip extends Component {
   render() {
     const tooltipElement = document.createElement("div");
     tooltipElement.className = "card";
-    tooltipElement.textContent = this.text;
+    const tooltipTemplate = document.getElementById("tooltip");
+    const tooltipBody = document.importNode(tooltipTemplate.content, true);
+    tooltipBody.querySelector("p").textContent = this.text;
+    tooltipElement.append(tooltipBody);
 
     const hostElPosLeft = this.hostElement.offsetLeft;
     const hostElPosTop = this.hostElement.offsetTop;
@@ -66,6 +70,7 @@ class Tooltip extends Component {
     tooltipElement.style.left = x + "px";
     tooltipElement.style.top = y + "px";
 
+    console.log(this.hostElement);
     tooltipElement.addEventListener("click", this.closeTooltip);
     this.tooltipElement = tooltipElement;
   }
