@@ -70,7 +70,6 @@ class Tooltip extends Component {
     tooltipElement.style.left = x + "px";
     tooltipElement.style.top = y + "px";
 
-    console.log(this.hostElement);
     tooltipElement.addEventListener("click", this.closeTooltip);
     this.tooltipElement = tooltipElement;
   }
