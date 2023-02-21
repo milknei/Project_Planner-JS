@@ -48,7 +48,7 @@ class Tooltip extends Component {
   closeTooltip() {
     this.detach();
     this.closeNotifier();
-  };
+  }
 
   render() {
     const tooltipElement = document.createElement("div");
@@ -103,7 +103,7 @@ class ProjectItem {
   connectDrag() {
     const item = document.getElementById(this.id);
     item.addEventListener("dragstart", (event) => {
-    item.scrollIntoView();
+      item.scrollIntoView();
 
       event.dataTransfer.setData("text/plain", this.id);
       event.dataTransfer.effectAllowed = "move";
@@ -156,23 +156,45 @@ class ProjectList {
       if (event.dataTransfer.types[0] === "text/plain") event.preventDefault();
       list.parentElement.classList.add("droppable");
     });
+
     list.addEventListener("dragover", (event) => {
       if (event.dataTransfer.types[0] === "text/plain") event.preventDefault();
     });
 
+    let lastTarget = null;
+    list.addEventListener("dragover", (event) => {
+      lastTarget = event.target;
+    });
+
     list.addEventListener("dragleave", (event) => {
-      list.tabIndex = "0";
-      console.log(event);
-      if (event.relatedTarget.closest && event.target && event.relatedTarget.closest(`#${this.type}-projects ul`) !== list)
+      let relatedTarget = null;
+      relatedTarget = event.relatedTarget || lastTarget;
+
+      if (
+        relatedTarget.closest &&
+        relatedTarget.closest(`#${this.type}-projects ul`) !== list
+      )
         list.parentElement.classList.remove("droppable");
-      });
+    });
+
+    list.addEventListener("drop", (event) => {
+      event.preventDefault();
+      let draggedList =
+        this.type === "active" ? "finished-projects" : "active-projects";
+      const projectId = event.dataTransfer.getData("text/plain");
+
+      if (this.projects.find((prj) => prj.id === projectId)) {
+        document.querySelector(`#${draggedList}`).classList.remove("droppable");
+        list.parentElement.classList.remove("droppable");
+        return;
+      }
       
-      list.addEventListener("drop", (event) => {
-        event.preventDefault();
-        const projectId = event.dataTransfer.getData("text/plain");
-        if (this.projects.find((prj) => prj.id === projectId)) return;
-        document.getElementById(projectId).querySelector("button:last-of-type").click();
-        list.parentElement.classList.remove("droppable");
+      document
+        .getElementById(projectId)
+        .querySelector("button:last-of-type")
+        .click();
+      list.parentElement.classList.remove("droppable");
+      document.querySelector(`#${draggedList}`).classList.remove("droppable");
     });
   }
 
