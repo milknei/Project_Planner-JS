@@ -45,7 +45,7 @@ class Tooltip extends Component {
     this.render();
   }
 
-  closeTooltip = () => {
+  closeTooltip() {
     this.detach();
     this.closeNotifier();
   };
@@ -70,7 +70,7 @@ class Tooltip extends Component {
     tooltipElement.style.left = x + "px";
     tooltipElement.style.top = y + "px";
 
-    tooltipElement.addEventListener("click", this.closeTooltip);
+    tooltipElement.addEventListener("click", this.closeTooltip.bind(this));
     this.tooltipElement = tooltipElement;
   }
 }
@@ -108,10 +108,6 @@ class ProjectItem {
       event.dataTransfer.setData("text/plain", this.id);
       event.dataTransfer.effectAllowed = "move";
     });
-
-    item.addEventListener("dragend", event => {
-      console.log(event);
-    })
   }
 
   connectMoreInfoButton() {
@@ -165,7 +161,9 @@ class ProjectList {
     });
 
     list.addEventListener("dragleave", (event) => {
-      if (event.relatedTarget.closest && event.relatedTarget.closest(`#${this.type}-projects ul`) !== list)
+      list.tabIndex = "0";
+      console.log(event);
+      if (event.relatedTarget.closest && event.target && event.relatedTarget.closest(`#${this.type}-projects ul`) !== list)
         list.parentElement.classList.remove("droppable");
       });
       
