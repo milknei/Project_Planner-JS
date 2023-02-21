@@ -125,3 +125,7 @@ button:active {
   background: white;
   cursor: pointer;
 }
+
+.droppable {
+  background: #ffd2d2;
+}
